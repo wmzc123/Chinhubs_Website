@@ -1,0 +1,18 @@
+<div class th:fragment="html">
+    <a th:href="${application.contextPath}">
+        <img id="logo" src="img/site/logo.jpg" class="logo" style="margin-left: 5rem;">
+    </a>
+    <form action="search" method="get" >
+        <div class="searchDiv"  style="background-color: #4cae4c"  >
+            <input name="keyword" type="text" placeholder="请输入您想要搜索的商品">
+            <button  type="submit" class="searchButton"  style="background-color: #4cae4c">搜索</button>
+<!--            <div class="searchBelow">-->
+<!--				<span th:each="c,status: ${application.categories_below_search}" th:if="${status.index>=5 && status.index<=8}">-->
+<!--					<a th:href="@{'category?cid='+${c.id}}" th:text="${c.name}" ></a>-->
+<!--					<span th:if="${status.index!=8}">|</span>-->
+<!--	            </span>-->
+
+<!--            </div>-->
+        </div>
+    </form>
+</div>
