@@ -26,7 +26,11 @@ public class Publish {
 	private String gooddes;
 	private String imgs;
 	private String pic;
-	private Integer cids;
+
+	@ManyToOne
+	@JoinColumn(name="cids")
+	private Category2 category2;
+
 	private String city;
 	private Integer collegeid;
 	private Integer count;
@@ -88,12 +92,12 @@ public class Publish {
 		this.pic = pic;
 	}
 
-	public Integer getCids() {
-		return cids;
+	public Category2 getCategory2() {
+		return category2;
 	}
 
-	public void setCids(Integer cids) {
-		this.cids = cids;
+	public void setCategory2(Category2 category2) {
+		this.category2 = category2;
 	}
 
 	public String getCity() {

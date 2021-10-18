@@ -6,9 +6,10 @@
 
 package com.how2java.tmall.service;
 
-import java.util.List;
-
+import com.how2java.tmall.dao.Category2DAO;
 import com.how2java.tmall.pojo.Category2;
+import com.how2java.tmall.pojo.Publish;
+import com.how2java.tmall.util.Page4Navigator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -19,80 +20,78 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.how2java.tmall.dao.CategoryDAO;
-import com.how2java.tmall.pojo.Category;
-import com.how2java.tmall.pojo.Product;
-import com.how2java.tmall.util.Page4Navigator;
+import java.util.List;
 
 @Service
-@CacheConfig(cacheNames="categories")
-public class CategoryService {
+@CacheConfig(cacheNames="categorie2s")
+public class Category2Service {
 
-	@Autowired CategoryDAO categoryDAO;
+	@Autowired
+	Category2DAO category2DAO;
 
 
 	@CacheEvict(allEntries=true)
 //	@CachePut(key="'category-one-'+ #p0")
-	public void add(Category bean) {
-		categoryDAO.save(bean);
+	public void add(Category2 bean) {
+		category2DAO.save(bean);
 	}
 
 	@CacheEvict(allEntries=true)
 //	@CacheEvict(key="'category-one-'+ #p0")
 	public void delete(int id) {
-		categoryDAO.delete(id);
+		category2DAO.delete(id);
 	}
 
 	
 	@Cacheable(key="'categories-one-'+ #p0")
-	public Category get(int id) {
-		Category c= categoryDAO.findOne(id);
+	public Category2 get(int id) {
+		Category2 c= category2DAO.findOne(id);
 		return c;
 	}
 
 	@CacheEvict(allEntries=true)
 //	@CachePut(key="'category-one-'+ #p0")
-	public void update(Category bean) {
-		categoryDAO.save(bean);
+	public void update(Category2 bean) {
+		category2DAO.save(bean);
 	}
 
 	@Cacheable(key="'categories-page-'+#p0+ '-' + #p1")
-	public Page4Navigator<Category> list(int start, int size, int navigatePages) {
+	public Page4Navigator<Category2> list(int start, int size, int navigatePages) {
     	Sort sort = new Sort(Sort.Direction.DESC, "id");
 		Pageable pageable = new PageRequest(start, size,sort);
-		Page pageFromJPA =categoryDAO.findAll(pageable);
+		Page pageFromJPA =category2DAO.findAll(pageable);
 		
 		return new Page4Navigator<>(pageFromJPA,navigatePages);
 	}
 
-	@Cacheable(key="'categories-all'")
-	public List<Category> list() {
+//	@Cacheable(key="'categories-all'")
+	public List<Category2> list() {
     	Sort sort = new Sort(Sort.Direction.DESC, "id");
-		return categoryDAO.findAll(sort);
+		return category2DAO.findAll(sort);
 	}
 
 	//这个方法的用处是删除Product对象上的 分类。 为什么要删除呢？ 因为在对分类做序列还转换为 json 的时候，会遍历里面的 products, 然后遍历出来的产品上，又会有分类，接着就开始子子孙孙无穷溃矣地遍历了，就搞死个人了
 	//而在这里去掉，就没事了。 只要在前端业务上，没有通过产品获取分类的业务，去掉也没有关系
 	
-	public void removeCategoryFromProduct(List<Category> cs) {
-		for (Category category : cs) {
-			removeCategoryFromProduct(category);
+	public void removeCategory2FromPublish(List<Category2> cs) {
+		for (Category2 category : cs) {
+			removeCategory2FromPublish(category);
 		}
 	}
 
-	public void removeCategoryFromProduct(Category category) {
-		List<Product> products =category.getProducts();
-		if(null!=products) {
-			for (Product product : products) {
-				product.setCategory(null);
+	public void removeCategory2FromPublish(Category2 category) {
+		List<Publish> publishes =category.getPublishes();
+		if(null!=publishes) {
+			for (Publish publish : publishes) {
+				publish.setCategory2(null);
 			}
 		}
 		
-		List<List<Product>> productsByRow =category.getProductsByRow();
-		if(null!=productsByRow) {
-			for (List<Product> ps : productsByRow) {
-				for (Product p: ps) {
-					p.setCategory(null);
+		List<List<Publish>> publishsByRow =category.getPublishesByRow();
+		if(null!=publishsByRow) {
+			for (List<Publish> ps : publishsByRow) {
+				for (Publish p: ps) {
+					p.setCategory2(null);
 				}
 			}
 		}

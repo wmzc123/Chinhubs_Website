@@ -6,11 +6,8 @@
 
 package com.how2java.tmall.dao;
 
-import com.how2java.tmall.pojo.Category;
-import com.how2java.tmall.pojo.Product;
+import com.how2java.tmall.pojo.Category2;
 import com.how2java.tmall.pojo.Publish;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -18,7 +15,7 @@ import java.util.List;
 public interface PublishDAO extends JpaRepository<Publish,Integer>{
 
 //	Page<Publish> findByUserid(int userid, Pageable pageable);
-//	List<Publish> findByCategoryOrderById(Category category);
+	List<Publish> findByCategory2OrderById(Category2 category2);
 //	List<Publish> findByNameLike(String keyword, Pageable pageable);
 
 }

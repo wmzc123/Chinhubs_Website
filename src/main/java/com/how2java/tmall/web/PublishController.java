@@ -32,23 +32,11 @@ public class PublishController {
     PublishService publishService;
     @Autowired
     ProductService productService;
-//    @Autowired
-//    PublishImageService publishImageService;
-
-//    @GetMapping("/categories/{cid}/products")
-//    public Page4Navigator<Product> list(@PathVariable("cid") int cid, @RequestParam(value = "start", defaultValue = "0") int start,@RequestParam(value = "size", defaultValue = "5") int size) throws Exception {
-//    	start = start<0?0:start;
-//    	Page4Navigator<Product> page =productService.list(cid, start, size,5 );
-//
-//        productImageService.setFirstProdutImages(page.getContent());
-//
-//    	return page;
-//    }
 
     @GetMapping("/publishs/search/{userid}")
-    public Page4Navigator<Publish> search(@RequestParam("good") String good, @RequestParam("start") Integer start, @RequestParam("size") Integer size, @PathVariable("userid") int userid) throws Exception {
+    public Page4Navigator<Publish> search(@RequestParam("keyword") String keyword, @RequestParam("start") Integer start, @RequestParam("size") Integer size, @PathVariable("userid") int userid) throws Exception {
         start = start < 0 ? 0 : start;
-        Page4Navigator<Publish> page = publishService.search(good, userid, start, size, 5);
+        Page4Navigator<Publish> page = publishService.search(keyword, userid, start, size, 5);
         return page;
     }
 
@@ -69,7 +57,6 @@ public class PublishController {
 
     @PostMapping("/publishs")
     public Object add(Publish bean,HttpServletRequest request) throws Exception {
-        bean.setCreat(new Date());
         publishService.add(bean,request);
         return bean;
     }

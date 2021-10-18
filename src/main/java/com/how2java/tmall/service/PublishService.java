@@ -8,15 +8,20 @@ package com.how2java.tmall.service;
 
 import com.how2java.tmall.dao.PublishDAO;
 import com.how2java.tmall.es.PublishESDAO;
+import com.how2java.tmall.pojo.Category;
+import com.how2java.tmall.pojo.Category2;
 import com.how2java.tmall.pojo.Publish;
+import com.how2java.tmall.pojo.User;
 import com.how2java.tmall.util.ImageUtil;
 import com.how2java.tmall.util.Page4Navigator;
+import com.how2java.tmall.util.SpringContextUtil;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.*;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
@@ -29,6 +34,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,6 +48,39 @@ public class PublishService {
     @Autowired
     PublishESDAO publishESDAO;
 
+    public void fill(List<Category2> category2s) {
+        for (Category2 category2 : category2s) {
+            fill(category2);
+        }
+    }
+
+    public void fill(Category2 category2) {
+        PublishService publishService = SpringContextUtil.getBean(PublishService.class);
+        List<Publish> publishes = publishService.listByCategory2(category2);
+//        productImageService.setFirstProdutImages(products);
+        category2.setPublishes(publishes);
+    }
+
+    //    @Cacheable(key="'products-cid-'+ #p0.id")
+    public List<Publish> listByCategory2(Category2 category2) {
+        return publishDAO.findByCategory2OrderById(category2);
+    }
+
+    public void fillByRow(List<Category2> categorys) {
+        int productNumberEachRow = 8;
+        for (Category2 category : categorys) {
+            List<Publish> publishes = category.getPublishes();
+            List<List<Publish>> productsByRow = new ArrayList<>();
+            for (int i = 0; i < publishes.size(); i += productNumberEachRow) {
+                int size = i + productNumberEachRow;
+                size = size > publishes.size() ? publishes.size() : size;
+                List<Publish> publishesOfEachRow = publishes.subList(i, size);
+                productsByRow.add(publishesOfEachRow);
+            }
+            category.setPublishesByRow(productsByRow);
+        }
+    }
+
     //    @Cacheable(key="'products-one-'+ #p0")
     public Publish get(int id) {
         return publishDAO.findOne(id);
@@ -48,6 +88,8 @@ public class PublishService {
 
     @CacheEvict(allEntries = true)
     public void add(Publish bean, HttpServletRequest request) {
+        bean.setCreat(new Date());
+        bean.setStatus(0);
         try {
             bean.setImgs(saveOrUpdateImageFile(request));
             publishDAO.save(bean);
@@ -80,11 +122,32 @@ public class PublishService {
     }
 
     //    @Cacheable(key = "'publishs-one-'+ #p0")
-    public Page4Navigator<Publish> search(String good, int userid, int start, int size, int navigatePages) {
+    public Page4Navigator<Publish> search(String keyword, int start, int size, int navigatePages) {
+        Publish publish = new Publish();
+        publish.setGood(keyword);
+        publish.setStatus(0);
+        ExampleMatcher matcher = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING).withIgnoreCase(true).withMatcher("good", ExampleMatcher.GenericPropertyMatchers.contains());
+        Example<Publish> example = Example.of(publish, matcher);
+        Sort sort = new Sort(Sort.Direction.DESC, "creat");
+        PageRequest pageRequest = new PageRequest(start, size, sort);
+        Page<Publish> pageFromJPA = publishDAO.findAll(example, pageRequest);
+        return new Page4Navigator<>(pageFromJPA, navigatePages);
+    }
+
+    //    @Cacheable(key = "'publishs-one-'+ #p0")
+    public List<Publish> search(User user) {
+        Publish publish = new Publish();
+        publish.setUserid(user.getId());
+        Example<Publish> example = Example.of(publish);
+        return publishDAO.findAll(example);
+    }
+
+    //    @Cacheable(key = "'publishs-one-'+ #p0")
+    public Page4Navigator<Publish> search(String keyword, int userid, int start, int size, int navigatePages) {
         Publish publish = new Publish();
         publish.setUserid(userid);
-        publish.setGood(good);
-        ExampleMatcher matcher = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING).withIgnoreCase(true).withMatcher("good", ExampleMatcher.GenericPropertyMatchers.contains());
+        publish.setKeyword(keyword);
+        ExampleMatcher matcher = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING).withIgnoreCase(true).withMatcher("keyword", ExampleMatcher.GenericPropertyMatchers.contains());
         Example<Publish> example = Example.of(publish, matcher);
         Sort sort = new Sort(Sort.Direction.DESC, "creat");
         PageRequest pageRequest = new PageRequest(start, size, sort);
@@ -118,95 +181,6 @@ public class PublishService {
     @CacheEvict(allEntries = true)
     public void update(Publish bean) {
         publishDAO.save(bean);
-    }
-
-//	@Cacheable(key="'products-cid-'+#p0+'-page-'+#p1 + '-' + #p2 ")
-//	public Page4Navigator<Product> list(int cid, int start, int size,int navigatePages) {
-//    	Category category = categoryService.get(cid);
-//    	Sort sort = new Sort(Sort.Direction.DESC, "id");
-//    	Pageable pageable = new PageRequest(start, size, sort);
-//    	Page<Product> pageFromJPA =productDAO.findByCategory(category,pageable);
-//    	return new Page4Navigator<>(pageFromJPA,navigatePages);
-//	}
-
-//	public void fill(List<Category> categorys) {
-//		for (Category category : categorys) {
-//			fill(category);
-//		}
-//	}
-
-
-//	@Cacheable(key="'products-cid-'+ #p0.id")
-//	public List<Product> listByCategory(Category category){
-//		return productDAO.findByCategoryOrderById(category);
-//	}
-//
-//	public void fill(Category category) {
-//		PublishService productService = SpringContextUtil.getBean(PublishService.class);
-//		List<Product> products = productService.listByCategory(category);
-//		productImageService.setFirstProdutImages(products);
-//		category.setProducts(products);
-//	}
-//
-//
-//	public void fillByRow(List<Category> categorys) {
-//        int productNumberEachRow = 8;
-//        for (Category category : categorys) {
-//            List<Product> products =  category.getProducts();
-//            List<List<Product>> productsByRow =  new ArrayList<>();
-//            for (int i = 0; i < products.size(); i+=productNumberEachRow) {
-//                int size = i+productNumberEachRow;
-//                size= size>products.size()?products.size():size;
-//                List<Product> productsOfEachRow =products.subList(i, size);
-//                productsByRow.add(productsOfEachRow);
-//            }
-//            category.setProductsByRow(productsByRow);
-//        }
-//	}
-//
-//
-//	public void setSaleAndReviewNumber(Product product) {
-//        int saleCount = orderItemService.getSaleCount(product);
-//        product.setSaleCount(saleCount);
-//
-//
-//        int reviewCount = reviewService.getCount(product);
-//        product.setReviewCount(reviewCount);
-//
-//	}
-
-
-//	public void setSaleAndReviewNumber(List<Product> products) {
-//		for (Product product : products)
-//			setSaleAndReviewNumber(product);
-//	}
-
-    public List<Publish> search(String keyword, int start, int size) {
-        initDatabase2ES();
-        FunctionScoreQueryBuilder functionScoreQueryBuilder = QueryBuilders.functionScoreQuery()
-                .add(QueryBuilders.matchPhraseQuery("name", keyword),
-                        ScoreFunctionBuilders.weightFactorFunction(100))
-                .scoreMode("sum")
-                .setMinScore(10);
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
-        Pageable pageable = new PageRequest(start, size, sort);
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withPageable(pageable)
-                .withQuery(functionScoreQueryBuilder).build();
-
-        Page<Publish> page = publishESDAO.search(searchQuery);
-        return page.getContent();
-    }
-
-    private void initDatabase2ES() {
-        Pageable pageable = new PageRequest(0, 5);
-        Page<Publish> page = publishESDAO.findAll(pageable);
-        if (page.getContent().isEmpty()) {
-            List<Publish> publishs = publishDAO.findAll();
-            for (Publish publish : publishs) {
-                publishESDAO.save(publish);
-            }
-        }
     }
 
 }
