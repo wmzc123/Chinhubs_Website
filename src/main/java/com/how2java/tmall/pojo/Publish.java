@@ -17,6 +17,7 @@ import java.util.Date;
 @JsonIgnoreProperties({ "handler","hibernateLazyInitializer"})
 @Document(indexName = "tmall_springboot",type = "publish")
 public class Publish {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")

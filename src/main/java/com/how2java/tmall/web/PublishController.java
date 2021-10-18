@@ -74,7 +74,6 @@ public class PublishController {
         return bean;
     }
 
-
     @DeleteMapping("/publishs/{id}")
     public String delete(@PathVariable("id") int id, HttpServletRequest request) throws Exception {
         publishService.delete(id);
