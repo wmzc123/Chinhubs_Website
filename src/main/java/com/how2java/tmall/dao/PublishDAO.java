@@ -16,6 +16,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PublishDAO extends JpaRepository<Publish,Integer>{
+
 //	Page<Publish> findByUserid(int userid, Pageable pageable);
 //	List<Publish> findByCategoryOrderById(Category category);
 //	List<Publish> findByNameLike(String keyword, Pageable pageable);
