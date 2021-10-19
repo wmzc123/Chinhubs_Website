@@ -7,10 +7,12 @@
 package com.how2java.tmall.web;
 
 import com.how2java.tmall.pojo.Publish;
+import com.how2java.tmall.pojo.User;
 import com.how2java.tmall.service.ProductService;
 import com.how2java.tmall.service.PublishService;
 import com.how2java.tmall.util.ImageUtil;
 import com.how2java.tmall.util.Page4Navigator;
+import com.how2java.tmall.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +59,11 @@ public class PublishController {
 
 
     @PostMapping("/publishs")
-    public Object add(Publish bean,HttpServletRequest request) throws Exception {
+    public Object add(HttpSession session, Publish bean, HttpServletRequest request) throws Exception {
+        User user = (User) session.getAttribute("user");
+        if (null == user)
+            return Result.fail("未登录");
+        bean.setUserid(user.getId());
         publishService.add(bean,request);
         return bean;
     }
