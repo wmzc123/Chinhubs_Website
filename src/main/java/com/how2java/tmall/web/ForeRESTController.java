@@ -75,7 +75,6 @@ public class ForeRESTController {
         String password = user.getPassword();
         name = HtmlUtils.htmlEscape(name);
         user.setName(name);
-
         boolean exist = userService.isExist(name);
 
         if (exist) {
