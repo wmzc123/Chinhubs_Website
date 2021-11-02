@@ -1,0 +1,172 @@
+<div th:fragment="html">
+    <script>
+        $(function(){
+            var data4Vue = {
+                uri:'add',
+                result: [],
+                publish:{good:'', gooddes:'', image:[], price:0 , cids:0, deliveryid :0, kindid:0, place:'',weixin:'',dura:30}
+            };
+            var data4Vue1 = {
+                uri:'getCategories',
+                categories: []
+            };
+            //ViewModel
+            var vue = new Vue({
+                el: '#workingArea',
+                data: data4Vue,
+                mounted:function(){
+                    linkDefaultActions();
+                },
+                methods: {
+                    newpublish:function(){
+                        var url =  this.uri;
+                        if(0==this.publish.good.length){
+                            $("span.errorMessage").html("请输入商品名称");
+                            $("div.registerErrorMessageDiv").css("visibility","visible");
+                            return;
+                        }
+                        if(0==this.publish.image.length){
+                            $("span.errorMessage").html("请上传商品图片");
+                            $("div.registerErrorMessageDiv").css("visibility","visible");
+                            return;
+                        }
+                        if(0==this.publish.weixin.length){
+                            $("span.errorMessage").html("请输入微信号");
+                            $("div.registerErrorMessageDiv").css("visibility","visible");
+                            return;
+                        }
+                        if(0==this.publish.deliveryid && 0==this.publish.place.length){
+                            $("span.errorMessage").html("请输入自提地址");
+                            $("div.registerErrorMessageDiv").css("visibility","visible");
+                            return;
+                        }
+
+
+                        axios.post(url,this.publish).then(function(response) {
+                            var result = response.data;
+                            if(result.code==0){
+                                location.href="publishSuccess";
+                            }
+                            else{
+                                $("span.errorMessage").html(result.message);
+                                $("div.registerErrorMessageDiv").css("visibility","visible");
+                            }
+                        });
+                    }
+                }
+            });
+            //ViewModel
+            var vue1 = new Vue({
+                el: '#workingArea',
+                data: data4Vue1,
+                mounted:function(){
+                    linkDefaultActions();
+                    this.load();
+                },
+                methods: {
+                    load:function(){
+                        var url =  this.uri;
+                        axios.get(url).then(function(response) {
+                            vue1.categories = response.data;
+                            vue1.$nextTick(function(){
+                                //要等渲染结束之后，才来进行监听，否则他们都没有被创建出来，监听也没有意义呀
+                                homePageRegisterListeners();
+                            })
+                        });
+                    }
+                },
+                filters:{
+                    subTitleFilter:function(value) {
+                        if (!value) return ''; //如果为空，则返回空字符串
+                        return value.split(" ")[0]; //根据空格拆分，并且只获取数组第一个值
+                    }
+                }
+            });
+        })
+    </script>
+    <div class="publishDiv">
+<!--        <div class="publishErrorMessageDiv">-->
+<!--            <div class="alert alert-danger" role="alert">-->
+<!--                <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>-->
+<!--                <span class="errorMessage"></span>-->
+<!--            </div>-->
+<!--        </div>-->
+
+
+        <table class="publishTable" align="center">
+            <tr>
+                <td class="publishTableLeftTD">商品名称</td>
+                <td  class="publishTableRightTD"><input v-model="publish.good" placeholder="请输入商品名称" > </td>
+            </tr>
+            <tr>
+                <td class="publishTableLeftTD">商品描述</td>
+                <td  class="publishTableRightTD"><textarea v-model="publish.gooddes" style="height: 10rem;width:50rem;" placeholder="请输入商品描述" /> </td>
+            </tr>
+            <tr>
+                <td class="publishTableLeftTD">选择商品图片</td>
+                <td  class="publishTableRightTD"><input type="file" v-model="publish.image"> </td>
+            </tr>
+            <tr>
+                <td class="publishTableLeftTD">商品价格</td>
+                <td  class="publishTableRightTD"><input v-model="publish.price">镑</td>
+            </tr>
+<!--            <tr>-->
+<!--                <td class="publishTableLeftTD">商品类别</td>-->
+<!--                <td  class="publishTableRightTD">-->
+<!--                    <select v-for="c in categories"  v-model="publish.kindid">-->
+<!--                        <option value = "c.id">{{c.name}}</option>-->
+<!--                    </select>-->
+<!--                </td>-->
+<!--            </tr>-->
+            <tr>
+                <td class="publishTableLeftTD">商品类别</td>
+                <td  class="publishTableRightTD">
+                    <select v-model="publish.kindid">
+                        <option value = "1">日用品</option>
+                        <option value = "2">装饰品</option>
+                        <option value = "3">衣物</option>
+                        <option value = "4">运动器材</option>
+                        <option value = "5">厨房用具</option>
+                        <option value = "6">美妆护肤</option>
+                        <option value = "7">家具</option>
+                        <option value = "8">房源</option>
+                        <option value = "9">食品</option>
+                        <option value = "10">学习用品</option>
+                        <option value = "11">医用卫生</option>
+                        <option value = "12">电子产品</option>
+                        <option value = "13">交通工具</option>
+                        <option value = "14">床上用品</option>
+                        <option value = "15">箱包</option>
+                        <option value = "16">阳台园艺</option>
+                        <option value = "17">电器</option>
+                        <option value = "18">其它</option>
+
+                    </select>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="publishTableLeftTD">配送方式</td>
+                <td  class="publishTableRightTD">
+                    <select v-model="publish.deliveryid">
+                        <option value = "0">自提</option>
+                        <option value = "1">帮送</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="publishTableLeftTD">自提地址（若帮送不必填）</td>
+                <td  class="publishTableRightTD"><input v-model="publish.place" placeholder="请输入自提地址" > </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="publishButtonTD"  >
+                    <a @click="newpublish"><button  style="background-color: #4cae4c">提   交</button></a>
+                </td>
+            </tr>
+        </table>
+<!--        <div class="eachHomepageCategoryProducts" v-for="c in categories">-->
+<!--            <span class="categoryTitle">{{c.name}}</span>-->
+<!--        </div>-->
+    </div>
+</div>

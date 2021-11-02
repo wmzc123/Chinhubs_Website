@@ -6,8 +6,10 @@
 
 package com.how2java.tmall.web;
 
+import com.how2java.tmall.pojo.Category;
 import com.how2java.tmall.pojo.Publish;
 import com.how2java.tmall.pojo.User;
+import com.how2java.tmall.service.CategoryService;
 import com.how2java.tmall.service.ProductService;
 import com.how2java.tmall.service.PublishService;
 import com.how2java.tmall.util.ImageUtil;
@@ -35,6 +37,8 @@ public class PublishController {
     PublishService publishService;
     @Autowired
     ProductService productService;
+    @Autowired
+    CategoryService categoryService;
 
     @GetMapping("/publishs/search/{userid}")
     public Page4Navigator<Publish> search(@RequestParam("keyword") String keyword, @RequestParam("start") Integer start, @RequestParam("size") Integer size, @PathVariable("userid") int userid) throws Exception {
@@ -68,6 +72,11 @@ public class PublishController {
         return bean;
     }
 
+    @GetMapping("/getCategories")
+    public Object getCat(){
+        List<Category> cs = categoryService.list();
+        return cs;
+    }
 
     @DeleteMapping("/publishs/{id}")
     public String delete(@PathVariable("id") int id, HttpServletRequest request) throws Exception {
