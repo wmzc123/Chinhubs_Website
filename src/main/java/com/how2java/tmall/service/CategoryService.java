@@ -6,29 +6,27 @@
 
 package com.how2java.tmall.service;
 
-import java.util.List;
-
-import com.how2java.tmall.pojo.Category2;
+import com.how2java.tmall.dao.CategoryDAO;
+import com.how2java.tmall.pojo.Category;
+import com.how2java.tmall.pojo.Product;
+import com.how2java.tmall.util.Page4Navigator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.how2java.tmall.dao.CategoryDAO;
-import com.how2java.tmall.pojo.Category;
-import com.how2java.tmall.pojo.Product;
-import com.how2java.tmall.util.Page4Navigator;
+import java.util.List;
 
 @Service
 @CacheConfig(cacheNames="categories")
 public class CategoryService {
 
-	@Autowired CategoryDAO categoryDAO;
+	@Autowired
+	CategoryDAO categoryDAO;
 
 
 	@CacheEvict(allEntries=true)
@@ -44,9 +42,9 @@ public class CategoryService {
 	}
 
 	
-	@Cacheable(key="'categories-one-'+ #p0")
+//	@Cacheable(key="'categories-one-'+ #p0")
 	public Category get(int id) {
-		Category c= categoryDAO.findOne(id);
+		Category c= categoryDAO.findById(id);
 		return c;
 	}
 
@@ -56,7 +54,7 @@ public class CategoryService {
 		categoryDAO.save(bean);
 	}
 
-	@Cacheable(key="'categories-page-'+#p0+ '-' + #p1")
+//	@Cacheable(key="'categories-page-'+#p0+ '-' + #p1")
 	public Page4Navigator<Category> list(int start, int size, int navigatePages) {
     	Sort sort = new Sort(Sort.Direction.DESC, "id");
 		Pageable pageable = new PageRequest(start, size,sort);
@@ -65,7 +63,7 @@ public class CategoryService {
 		return new Page4Navigator<>(pageFromJPA,navigatePages);
 	}
 
-	@Cacheable(key="'categories-all'")
+//	@Cacheable(key="'categories-all'")
 	public List<Category> list() {
     	Sort sort = new Sort(Sort.Direction.DESC, "id");
 		return categoryDAO.findAll(sort);
@@ -81,16 +79,16 @@ public class CategoryService {
 	}
 
 	public void removeCategoryFromProduct(Category category) {
-		List<Product> products =category.getProducts();
-		if(null!=products) {
-			for (Product product : products) {
-				product.setCategory(null);
+		List<Product> Products =category.getProducts();
+		if(null!=Products) {
+			for (Product Product : Products) {
+				Product.setCategory(null);
 			}
 		}
 		
-		List<List<Product>> productsByRow =category.getProductsByRow();
-		if(null!=productsByRow) {
-			for (List<Product> ps : productsByRow) {
+		List<List<Product>> ProductsByRow =category.getProductsByRow();
+		if(null!=ProductsByRow) {
+			for (List<Product> ps : ProductsByRow) {
 				for (Product p: ps) {
 					p.setCategory(null);
 				}

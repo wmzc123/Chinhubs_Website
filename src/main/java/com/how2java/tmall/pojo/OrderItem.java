@@ -28,8 +28,7 @@ public class OrderItem {
 	private int id;
 	
     @ManyToOne
-    @JoinColumn(name="pid")	
-    
+    @JoinColumn(name="pid")
 	private Product product;
     
     @ManyToOne

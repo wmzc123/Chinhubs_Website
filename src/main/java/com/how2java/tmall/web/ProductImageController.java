@@ -14,6 +14,10 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
+import com.how2java.tmall.pojo.Product;
+import com.how2java.tmall.pojo.ProductImage;
+import com.how2java.tmall.service.CategoryService;
+import com.how2java.tmall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,18 +27,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.how2java.tmall.pojo.Product;
-import com.how2java.tmall.pojo.ProductImage;
-import com.how2java.tmall.service.CategoryService;
 import com.how2java.tmall.service.ProductImageService;
-import com.how2java.tmall.service.ProductService;
 import com.how2java.tmall.util.ImageUtil;
  
 @RestController
 public class ProductImageController {
-	@Autowired ProductService productService;
+	@Autowired
+	ProductService productService;
 	@Autowired ProductImageService productImageService;
-	@Autowired CategoryService categoryService;
+	@Autowired
+	CategoryService categoryService;
 	
 	@GetMapping("/products/{pid}/productImages")
     public List<ProductImage> list(@RequestParam("type") String type, @PathVariable("pid") int pid) throws Exception {

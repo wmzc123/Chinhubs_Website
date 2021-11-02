@@ -8,6 +8,7 @@ package com.how2java.tmall.service;
 
 import java.util.List;
 
+import com.how2java.tmall.pojo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -15,10 +16,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.how2java.tmall.dao.OrderItemDAO;
-import com.how2java.tmall.pojo.Order;
-import com.how2java.tmall.pojo.OrderItem;
-import com.how2java.tmall.pojo.Product;
-import com.how2java.tmall.pojo.User;
 import com.how2java.tmall.util.SpringContextUtil;
 
 @Service
@@ -82,12 +79,12 @@ public class OrderItemService {
         return result;
     }
 
-    @Cacheable(key="'orderItems-uid-'+ #p0.id")
+//    @Cacheable(key="'orderItems-uid-'+ #p0.id")
     public List<OrderItem> listByUser(User user) {
     	return orderItemDAO.findByUserAndOrderIsNull(user);
     }
     
-    @Cacheable(key="'orderItems-pid-'+ #p0.id")
+//    @Cacheable(key="'orderItems-pid-'+ #p0.id")
     public List<OrderItem> listByProduct(Product product) {
     	return orderItemDAO.findByProduct(product);
     }
