@@ -9,7 +9,6 @@ package com.how2java.tmall.web;
 import com.how2java.tmall.comparator.*;
 import com.how2java.tmall.pojo.*;
 import com.how2java.tmall.service.*;
-import com.how2java.tmall.util.Page4Navigator;
 import com.how2java.tmall.util.Result;
 import org.apache.commons.lang.math.RandomUtils;
 import org.apache.shiro.SecurityUtils;
@@ -19,7 +18,7 @@ import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
@@ -45,27 +44,14 @@ public class ForeRESTController {
     ReviewService reviewService;
     @Autowired
     OrderService orderService;
-    @Autowired
-    PublishService publishService;
-    @Autowired
-    Category2Service category2Service;
 
+//    old首页数据接口
     @GetMapping("/forehome")
     public Object home() {
         List<Category> cs = categoryService.list();
         productService.fill(cs);
         productService.fillByRow(cs);
         categoryService.removeCategoryFromProduct(cs);
-
-        return cs;
-    }
-
-    @GetMapping("/forehome2")
-    public Object home2() {
-        List<Category2> cs = category2Service.list();
-        publishService.fill(cs);
-        publishService.fillByRow(cs);
-        category2Service.removeCategory2FromPublish(cs);
         return cs;
     }
 
@@ -96,7 +82,7 @@ public class ForeRESTController {
         return Result.success();
     }
 
-    @PostMapping("/forelogin")
+        @PostMapping("/forelogin")
     public Object login(@RequestBody User userParam, HttpSession session) {
         String name = userParam.getName();
         name = HtmlUtils.htmlEscape(name);
@@ -115,6 +101,148 @@ public class ForeRESTController {
         }
 
     }
+
+    // Chinhubs登陆
+
+
+//    @RequestMapping(value = "/pcLoginByWeiXin", method = RequestMethod.POST)
+//    @ResponseStatus(HttpStatus.OK)
+//    public SourceDataBean<UserLoginBean> pcLoginByWeiXin(@RequestBody WeiXinLoginBean bean) {
+//        SourceDataBean<UserLoginBean> sdb = new SourceDataBean<UserLoginBean>();
+//        UserLoginBean userLoginBean = new UserLoginBean();
+//        String loginName = bean.getLoginName();
+//        String openId = bean.getOpenId();
+//        String code = bean.getCode(); // 微信code
+//        /** 错误信息 **/
+//        if (StringUtils.isBlank(userId) && StringUtils.isBlank(code) && loginName == null) {
+//            sdb.setMessage("501", "微信code为空");
+//            return sdb;
+//        }
+//        if (openId == null && code != null) {
+//            // 第一次进入界面，code不空，openid为空，根据code获取openid，然后查询是否存在用户信息。
+//            Map<String, String> accessTokenMap = getPcWXAccessToken(code); // 获取getWXAccessToken（微信网站PC扫码登录）
+//            /** 请求微信服务器错误 **/
+//            if (accessTokenMap.get("errcode") != null) {
+//                sdb.setMessage(accessTokenMap.get("errcode"), accessTokenMap.get("errmsg"));
+//                return sdb;
+//            }
+//            openId = accessTokenMap.get("openid");
+//            accessToken = accessTokenMap.get("access_token");
+//            unionid = accessTokenMap.get("unionid");
+//
+//            // 查询出微信信息
+//            Map<String, String> wxUserMap = this.getPcWeiXinUserInfo(openId, accessToken); // 获得微信用户信息
+//
+//            /** 获取微信信息异常 **/
+//            if (wxUserMap.get("errcode") != null) {
+//                logger.error("LoginController ==> loginByWeiXin.getWeiXinUserInfo(){errcode:" + wxUserMap.get("errcode")
+//                        + ",errmsg:" + wxUserMap.get("errmsg") + "}");
+//                sdb.setMessage(wxUserMap.get("errcode"), wxUserMap.get("errmsg"));
+//                return sdb;
+//
+//
+//
+//            }
+//
+//
+//        }
+//        return sdb;
+//    }
+
+    /**
+     * 获取getPcWXAccessToken
+     */
+    @Value("${weixin.pc.fw.accessTokenUrl}")
+    private String pcAccessTokenUrl;
+
+    @Value("${weixin.pc.fw.appID}")
+    private String pcAppID;
+
+    @Value("${weixin.pc.fw.appsecret}")
+    private String pcAppsecret;
+
+//    private Map<String, String> getPcWXAccessToken(String code) {
+//        Map<String, String> resMap = new HashMap<String, String>();
+//        StringBuffer target = new StringBuffer();
+//        target.append(pcAccessTokenUrl).append("appid=").append(pcAppID).append("&secret=").append(pcAppsecret)
+//                .append("&code=").append(code).append("&grant_type=authorization_code");
+//        ClientResponseEntity responceEntity = HttpClientUtil.getMethod(target.toString(), "zh-cn");
+//        String resMessageString = responceEntity.getMessage();
+//        JSONObject jSONObject = JSON.parseObject(resMessageString);
+//        if (jSONObject != null && jSONObject.get("errcode") != null) { // 有错误码
+//            String errcode = String.valueOf(jSONObject.get("errcode"));
+//            String errmsg = String.valueOf(jSONObject.get("errmsg"));
+//            resMap.put("errmsg", errmsg);
+//            resMap.put("errcode", errcode);
+//        } else {
+//            String accessToken = String.valueOf(jSONObject.get("access_token"));
+//            String refreshToken = String.valueOf(jSONObject.get("refresh_token"));
+//            String openid = String.valueOf(jSONObject.get("openid"));
+//            String expiresIn = String.valueOf(jSONObject.get("expires_in"));
+//            String unionid = String.valueOf(jSONObject.get("unionid"));
+//
+//            resMap.put("access_token", accessToken);
+//            resMap.put("refresh_token", refreshToken);
+//            resMap.put("openid", openid);
+//            resMap.put("expires_in", expiresIn);
+//            resMap.put("unionid", unionid);
+//        }
+//        return resMap;
+//    }
+
+    /**
+     * 获得微信用户信息
+     *
+     * @param openId
+     * @param accessToken
+     * @return
+     */
+    @Value("${weixin.pc.fw.userInfoUrl}")
+    private String pcUserInfoUrl;
+
+//    private Map<String, String> getPcWeiXinUserInfo(String openId, String accessToken) {
+//        Map<String, String> resMap = new HashMap<String, String>();
+//        StringBuffer url = new StringBuffer(pcUserInfoUrl);
+//        url.append("access_token=").append(accessToken).append("&").append("openid=").append(openId).append("&")
+//                .append("lang=zh_CN");
+//        ClientResponseEntity responceEntity = HttpClientUtil.getMethod(url.toString(), "zh_CN");
+//        String resMessageString = null;
+//        try {
+//
+//            resMessageString = new String(responceEntity.getMessage().getBytes("ISO-8859-1"), "UTF-8");
+//            // resMessageString =new
+//            // String(responceEntity.getMessage().getBytes(),"utf-8");
+//        } catch (UnsupportedEncodingException e) {
+//            System.out.println("WeiXinLoginController ==> getPcWeiXinUserInfo().UnsupportedEncodingException{} 获取用户信息编码错误");
+//        }
+//        JSONObject jSONObject = JSON.parseObject(resMessageString);
+//        if (jSONObject != null && jSONObject.get("errcode") != null) {
+//            String errcode = String.valueOf(jSONObject.get("errcode"));
+//            String errmsg = String.valueOf(jSONObject.get("errmsg"));
+//            resMap.put("errmsg", errmsg);
+//            resMap.put("errcode", errcode);
+//        } else {
+//            String nickname = String.valueOf(jSONObject.get("nickname"));
+//            String openid = String.valueOf(jSONObject.get("openid"));
+//            String sex = String.valueOf(jSONObject.get("sex"));
+//            String province = String.valueOf(jSONObject.get("province"));
+//            String city = String.valueOf(jSONObject.get("city"));
+//            String country = String.valueOf(jSONObject.get("country"));
+//            String headimgurl = String.valueOf(jSONObject.get("headimgurl"));
+//            String unionid = String.valueOf(jSONObject.get("unionid"));
+//
+//            resMap.put("nickname", nickname);
+//            resMap.put("openid", openid);
+//            resMap.put("sex", sex);
+//            resMap.put("province", province);
+//            resMap.put("city", city);
+//            resMap.put("country", country);
+//            resMap.put("headimgurl", headimgurl);
+//            resMap.put("unionid", unionid);
+//        }
+//        return resMap;
+//    }
+
 
     @GetMapping("/foreproduct/{pid}")
     public Object product(@PathVariable("pid") int pid) {
@@ -152,7 +280,7 @@ public class ForeRESTController {
     public Object category(@PathVariable int cid, String sort) {
         Category c = categoryService.get(cid);
         productService.fill(c);
-        productService.setSaleAndReviewNumber(c.getProducts());
+//        productService.setSaleAndReviewNumber(c.getProducts());
         categoryService.removeCategoryFromProduct(c);
 
         if (null != sort) {
@@ -185,22 +313,18 @@ public class ForeRESTController {
     public Object search(String keyword) {
         if (null == keyword)
             keyword = "";
-        List<Product> ps = productService.search(keyword, 0, 20);
-        productImageService.setFirstProdutImages(ps);
-        productService.setSaleAndReviewNumber(ps);
+        List<Product> ps = productService.search(keyword);
         return ps;
     }
 
-    @GetMapping("foresearch2")
-    public Page4Navigator<Publish> search2(String keyword, int start, int size) {
-        if (null == keyword)
-            keyword = "";
-        Page4Navigator<Publish> ps = publishService.search(keyword, 0, 20, 5);
-//        productImageService.setFirstProdutImages(ps);
-//        productService.setSaleAndReviewNumber(ps);
-        return ps;
+    @GetMapping("foreSearchByUser")
+    public Object search(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (null == user)
+            return Result.fail("未登录");
+        List<Product> ps = productService.search(user);
+        return Result.success(ps);
     }
-
 
     @GetMapping("forebuyone")
     public Object buyone(int pid, int num, HttpSession session) {
@@ -344,7 +468,7 @@ public class ForeRESTController {
         User user = (User) session.getAttribute("user");
         if (null == user)
             return Result.fail("未登录");
-        List<Publish> ps = publishService.search(user);
+        List<Product> ps = productService.search(user);
         return ps;
     }
 

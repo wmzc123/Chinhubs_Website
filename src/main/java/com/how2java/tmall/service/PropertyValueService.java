@@ -8,6 +8,7 @@ package com.how2java.tmall.service;
 
 import java.util.List;
 
+import com.how2java.tmall.pojo.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -15,7 +16,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.how2java.tmall.dao.PropertyValueDAO;
-import com.how2java.tmall.pojo.Product;
 import com.how2java.tmall.pojo.Property;
 import com.how2java.tmall.pojo.PropertyValue;
 import com.how2java.tmall.util.SpringContextUtil;
@@ -47,7 +47,7 @@ public class PropertyValueService  {
 		}
 	}
 
-	@Cacheable(key="'propertyValues-one-pid-'+#p0.id+ '-ptid-' + #p1.id")
+//	@Cacheable(key="'propertyValues-one-pid-'+#p0.id+ '-ptid-' + #p1.id")
 	public PropertyValue getByPropertyAndProduct(Product product, Property property) {
 		return propertyValueDAO.getByPropertyAndProduct(property,product);
 	}

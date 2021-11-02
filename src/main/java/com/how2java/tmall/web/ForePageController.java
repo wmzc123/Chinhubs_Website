@@ -47,6 +47,10 @@ public class ForePageController {
 	public String category(){
 		return "fore/category";
 	}
+	@GetMapping(value="/searchByUser")
+	public String searchByUser(){
+		return "fore/searchByUser";
+	}
 	@GetMapping(value="/confirmPay")
 	public String confirmPay(){
 		return "fore/confirmPay";
