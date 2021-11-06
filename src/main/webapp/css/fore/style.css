@@ -2364,3 +2364,72 @@ div.publishSuccessDiv {
 	padding: 20px 130px;
 }
 
+div.publishDiv {
+	margin: 10px 20px;
+	text-align: center;
+}
+
+table.publishTable {
+	color: #3C3C3C;
+	font-size: 16px;
+	table-layout: fixed;
+	margin-top: 50px;
+}
+
+table.publishTable td {
+	/* 	border:1px dotted skyblue !important; */
+	padding: 10px 30px;
+}
+
+td.publishTableLeftTD {
+	width: 300px;
+	text-align: right;
+}
+
+td.publishTableRightTD {
+	width: 300px;
+	text-align: left;
+}
+
+/*td.publishTableRightTD1 {*/
+/*	width: 50rem;*/
+/*	height: 10rem;*/
+/*	text-align: left;*/
+/*}*/
+
+td.publishTip {
+	font-weight: bold;
+}
+
+table.publishTable input {
+	border: 1px solid #DEDEDE;
+	width: 213px;
+	height: 36px;
+	font-size: 14px;
+}
+
+td.publishButtonTD {
+	text-align: center;
+}
+
+table.publishTable button {
+	width: 170px;
+	height: 36px;
+	border-radius: 2px;
+	color: white;
+	background-color: #C40000;
+	border-width: 0px;
+}
+
+table.publishTable {
+
+}
+
+div.publishSuccessDiv {
+	margin: 10px 20px;
+	background-color: #F3FDF6;
+	border: 1px solid #DEF3E6;
+	font-size: 16px;
+	color: #3C3C3C;
+	padding: 20px 130px;
+}

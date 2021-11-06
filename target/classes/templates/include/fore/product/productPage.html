@@ -54,9 +54,15 @@
     </script>
 
     <title>{{p.name}}</title>
+<<<<<<< HEAD
     <div class="categoryPictureInProductPageDiv">
         <img v-if="category!=null" class="categoryPictureInProductPage" :src="'img/category/'+category.id+'.jpg'">
     </div>
+=======
+<!--    <div class="categoryPictureInProductPageDiv">-->
+<!--        <img v-if="category!=null" class="categoryPictureInProductPage" :src="'img/category/'+category.id+'.jpg'">-->
+<!--    </div>-->
+>>>>>>> f4f179c9efae12198e6ea9903f28b03839ad3b80
     <div class="productPageDiv">
         <div th:replace="include/fore/product/imgAndInfo::html" ></div>
         <div th:replace="include/fore/product/productReview::html" ></div>
