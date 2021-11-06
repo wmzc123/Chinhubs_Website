@@ -56,7 +56,7 @@ public class CategoryService {
 
 //	@Cacheable(key="'categories-page-'+#p0+ '-' + #p1")
 	public Page4Navigator<Category> list(int start, int size, int navigatePages) {
-    	Sort sort = new Sort(Sort.Direction.DESC, "id");
+    	Sort sort = new Sort(Sort.Direction.ASC, "id");
 		Pageable pageable = new PageRequest(start, size,sort);
 		Page pageFromJPA =categoryDAO.findAll(pageable);
 		
@@ -65,7 +65,7 @@ public class CategoryService {
 
 //	@Cacheable(key="'categories-all'")
 	public List<Category> list() {
-    	Sort sort = new Sort(Sort.Direction.DESC, "id");
+    	Sort sort = new Sort(Sort.Direction.ASC, "id");
 		return categoryDAO.findAll(sort);
 	}
 
