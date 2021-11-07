@@ -26,7 +26,7 @@ CREATE TABLE `category` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -163,6 +163,7 @@ CREATE TABLE `product` (
   `place` varchar(255) DEFAULT NULL COMMENT '地址',
   `price` float(10,2) DEFAULT NULL COMMENT '价格',
   `status` tinyint(4) DEFAULT NULL COMMENT '0待出售 1交易中 2',
+  `img` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -173,7 +174,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (1,1,'1','1',1,'1',1.00,1,1,'2021-10-18 02:25:18',1,'1','c',1,'1','1',1.00,0),(3,1,'1','1',1,'1',1.00,1,1,'2021-10-19 02:32:57',1,'1','a',1,'1','1',1.00,0),(4,1,'1','1',1,'1',1.00,1,1,'2021-10-19 02:33:12',1,'1','b',1,'1','1',1.00,0);
+INSERT INTO `product` VALUES (1,1,'1','1',1,'1',1.00,1,1,'2021-10-18 02:25:18',1,'1','c',1,'1','1',2.00,0,'https://6368-chinhubs-0gk1bxs4dafed4e4-1306171113.tcb.qcloud.la/goods-pic/oVMtE5QKo-DVy5IQzgEmwhoXJjoE/16097.png?sign=e5c647a99ef6b42894cc486721d2da29&t=1636305462'),(3,1,'1','1',1,'1',1.00,1,1,'2021-10-19 02:32:57',1,'1','a',1,'1','1',1.00,0,NULL),(4,1,'1','1',1,'1',1.00,1,1,'2021-10-19 02:33:12',1,'1','b',1,'1','1',1.00,0,NULL);
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -319,4 +320,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-11-06 17:22:43
+-- Dump completed on 2021-11-08  1:52:52

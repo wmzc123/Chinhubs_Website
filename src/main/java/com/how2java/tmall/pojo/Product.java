@@ -36,6 +36,7 @@ public class Product {
 	private Date createDate;
 	private Integer deliveryid;
 	private String dura;
+	private String img;
 	private String keyword;
 	private Integer kindid;
 	private String notes;
@@ -125,6 +126,14 @@ public class Product {
 
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
+	}
+
+	public String getImg() {
+		return img;
+	}
+
+	public void setImg(String img) {
+		this.img = img;
 	}
 
 	public Integer getDeliveryid() {
@@ -239,9 +248,3 @@ public class Product {
 		this.promotePrice = promotePrice;
 	}
 }
-
-/**
-* 模仿天猫整站 springboot 教程 为 how2j.cn 版权所有
-* 本教程仅用于学习使用，切勿用于非法用途，由此引起一切后果与本站无关
-* 供购买者学习，请勿私自传播，否则自行承担相关法律责任
-*/	
