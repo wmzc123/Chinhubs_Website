@@ -22,7 +22,9 @@ public class Product {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Integer id;
+	private String id2;
 	private Integer userid;
+	private String openid;
 	private String good;
 	private String gooddes;
 
@@ -33,10 +35,9 @@ public class Product {
 	private String city;
 	private Integer collegeid;
 	private Integer count;
-	private Date createDate;
+	private Long createDate;
 	private Integer deliveryid;
 	private String dura;
-	private String img;
 	private String keyword;
 	private Integer kindid;
 	private String notes;
@@ -120,20 +121,12 @@ public class Product {
 		this.count = count;
 	}
 
-	public Date getCreateDate() {
+	public Long getCreateDate() {
 		return createDate;
 	}
 
-	public void setCreateDate(Date createDate) {
+	public void setCreateDate(Long createDate) {
 		this.createDate = createDate;
-	}
-
-	public String getImg() {
-		return img;
-	}
-
-	public void setImg(String img) {
-		this.img = img;
 	}
 
 	public Integer getDeliveryid() {
@@ -246,5 +239,21 @@ public class Product {
 
 	public void setPromotePrice(Float promotePrice) {
 		this.promotePrice = promotePrice;
+	}
+
+	public String getId2() {
+		return id2;
+	}
+
+	public void setId2(String id2) {
+		this.id2 = id2;
+	}
+
+	public String getOpenid() {
+		return openid;
+	}
+
+	public void setOpenid(String openid) {
+		this.openid = openid;
 	}
 }

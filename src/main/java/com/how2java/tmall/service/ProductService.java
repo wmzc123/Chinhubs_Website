@@ -85,7 +85,7 @@ public class ProductService {
 
     @CacheEvict(allEntries = true)
     public void add(Product bean, HttpServletRequest request) {
-        bean.setCreateDate(new Date());
+        bean.setCreateDate(System.currentTimeMillis());
         bean.setStatus(0);
         productDAO.save(bean);
     }
